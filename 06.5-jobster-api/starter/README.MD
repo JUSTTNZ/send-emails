@@ -9,9 +9,7 @@ The starter is a copy of jobs-api final project, just with additional data.
 - navigate to 06.5-jobster-api/starter
 - install dependencies
 
-```sh
-npm install
-```
+
 
 - create .env and provide correct values
 - you can copy from previous project (just change the DB name)
