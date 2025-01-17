@@ -10,9 +10,11 @@ const stripeController = async(req, res) => {
 
     const paymentIntent = await stripe.paymentIntents.create({
         amount: calculateOrderAmount(),
-        
+        currency: 'usd'
     })
-    res.send('Stripe Route');   
+    console.log(paymentIntent);
+    
+    res.json({clientSecret: paymentIntent.client_secret});   
 }
 
 module.exports = stripeController;
