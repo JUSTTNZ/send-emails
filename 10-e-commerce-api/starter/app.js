@@ -2,6 +2,10 @@ require ('dotenv').config();
 require('express-async-errors');
 const express =  require('express');
 const app = express();
+
+//rest of the package
+const morgan = require('morgan')
+
 const port = process.env.PORT || 5000;
 
 
@@ -15,7 +19,7 @@ const connectDB = require('./db/connect');
 const notFoundMiddleware = require('./middleware/not-found')
 const errorHandlerMiddleware = require('./middleware/error-handler')
 
-//rest of the package
+
 app.use(morgan('tiny'))
 app.use(express.json())
 
