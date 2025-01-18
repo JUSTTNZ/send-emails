@@ -14,6 +14,10 @@ const port = process.env.PORT || 5000;
 // DATABASE
 const connectDB = require('./db/connect');
 
+// routers
+
+const authRouter = require('./routes/authRoutes')
+
 // MIDDLEWARE
 
 const notFoundMiddleware = require('./middleware/not-found')
@@ -26,6 +30,8 @@ app.use(express.json())
 app.get('/', (req, res) => {
     res.send('e-commerce')
 })
+
+app.use('/api/v1/auth/', authRouter)
 
 app.use(notFoundMiddleware)
 app.use(errorHandlerMiddleware)
