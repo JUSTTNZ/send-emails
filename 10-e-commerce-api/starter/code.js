@@ -1,107 +1,133 @@
-users [icon: user] {
-    _id string pk
-    username string
-    email (unique) string
-    password string
-    role ("student", "admin") string
-    phone_number string
-    school_id ObjectId schools
-    department_id ObjectId departments
-    level string
-    created_At Date
-    updated_At Date
-  }
-  
-  books [icon: book] {
-    _id string pk
-    title string
-    author string
-    description string
-    price Number
-    stock_quantity Number
-    school_id ObjectId schools
-    department_id ObjectId departments
-    level string
-    created_At Date
-    updated_At Date
-  }
-  
-  schools [icon: building] {
-    _id string pk
-    name string
-    description string
-    created_At Date
-    updated_At Date
-  }
-  
-  departments [icon: package] {
-    _id string pk
-    school_id ObjectId schools
-    name string
-    description string
-    created_At Date
-    updated_At Date
-  }
-  
-  categories [icon: package] {
-    category_id string pk
-    name string
-    description string
-    created_At Date
-    updated_At Date
-  }
-  
-  orders [icon: list] {
-    _id string pk
-    user_id ObjectId users
-    orderItems ObjectId[] orderItems
-    status enum ("pending", "collected")
-    total_price Number
-    payment_status enum ("Success", "failed", "pending") string
-    created_At Date
-    updated_At Date
-  }
-  
-  orderItems [icon: list] {
-    _id string pk
-    order_id ObjectId orders
-    book_id ObjectId books
-    quantity Number
-    price Number
-  }
-  
-  transactions [icon: bank] {
-    transaction_id string pk
-    order_id ObjectId orders
-    user_id ObjectId users
-    amount Number
-    payment_method enum ("bank", "card", "transfer") string
-    payment_gateway enum ("paystack", "stripe") string
-    status enum ("Success", "failed", "pending") string
-    created_At Date
-  }
-  
-  comments [icon: pencil] {
-    comments_id string pk
-    user_id ObjectId users
-    book_id ObjectId books
-    comment string
-    rating Number
-    created_At Date
-  }
-  
-  
-  books.school_id > schools._id
-  books.department_id > departments._id
-  books.level <> users.level
-  departments.school_id > schools._id
-  users.school_id > schools._id
-  users.department_id > departments._id
-  users.level <> books.level
-  orderItems.book_id > books._id
-  orders.user_id > users._id
-  orders.orderItems < orderItems._id
-  transactions.order_id > orders._id
-  transactions.user_id > users._id
-  comments.user_id > users._id
-  comments.book_id > books._id
+// Database Schema and Relationships
+
+ {
+  users: {
+    _id: "string", // Primary Key
+    username: "string", // Unique identifier for the user
+    email: "string (unique)", // User's email address
+    password: "string", // Encrypted password
+    role: '"student" | "admin"', // User role
+    phone_number: "string", // User's contact number
+    school_id: "ObjectId (schools)", // References the school the user belongs to
+    department_id: "ObjectId (departments)", // References the user's department
+    level: "string", // Academic level (e.g., "100", "200")
+    created_At: "Date", // Record creation timestamp
+    updated_At: "Date", // Record last updated timestamp
+  },
+  books: {
+    _id: "string", // Primary Key
+    title: "string", // Book title
+    author: "string", // Author's name
+    description: "string", // Brief book description
+    price: "Number", // Cost of the book
+    stock_quantity: "Number", // Number of copies available
+    school_id: "ObjectId (schools)", // References the school offering the book
+    department_id: "ObjectId (departments)", // References the department associated with the book
+    level: "string", // Academic level relevant to the book
+    created_At: "Date", // Record creation timestamp
+    updated_At: "Date", // Record last updated timestamp
+  },
+  schools: {
+    _id: "string", // Primary Key
+    name: "string", // School name
+    description: "string", // School description
+    created_At: "Date", // Record creation timestamp
+    updated_At: "Date", // Record last updated timestamp
+  },
+  departments: {
+    _id: "string", // Primary Key
+    school_id: "ObjectId (schools)", // References the school this department belongs to
+    name: "string", // Department name
+    description: "string", // Brief description of the department
+    created_At: "Date", // Record creation timestamp
+    updated_At: "Date", // Record last updated timestamp
+  },
+  categories: {
+    category_id: "string", // Primary Key
+    name: "string", // Category name
+    description: "string", // Category description
+    created_At: "Date", // Record creation timestamp
+    updated_At: "Date", // Record last updated timestamp
+  },
+  orders: {
+    _id: "string", // Primary Key
+    user_id: "ObjectId (users)", // References the user who placed the order
+    orderItems: ["ObjectId (orderItems)"], // References the items in the order
+    status: '"pending" | "collected"', // Order status
+    total_price: "Number", // Total price of the order
+    payment_status: '"Success" | "failed" | "pending"', // Payment status
+    created_At: "Date", // Record creation timestamp
+    updated_At: "Date", // Record last updated timestamp
+  },
+  orderItems: {
+    _id: "string", // Primary Key
+    order_id: "ObjectId (orders)", // References the order
+    book_id: "ObjectId (books)", // References the book
+    quantity: "Number", // Quantity of the book ordered
+    price: "Number", // Price of the book in the order
+  },
+  transactions: {
+    transaction_id: "string", // Primary Key
+    order_id: "ObjectId (orders)", // References the order
+    user_id: "ObjectId (users)", // References the user
+    amount: "Number", // Transaction amount
+    payment_method: '"bank" | "card" | "transfer"', // Payment method
+    payment_gateway: '"paystack" | "stripe"', // Payment gateway
+    status: '"Success" | "failed" | "pending"', // Transaction status
+    created_At: "Date", // Record creation timestamp
+  },
+  comments: {
+    comments_id: "string", // Primary Key
+    user_id: "ObjectId (users)", // References the user who commented
+    book_id: "ObjectId (books)", // References the book
+    comment: "string", // User's comment
+    rating: "Number", // User's rating of the book
+    created_At: "Date", // Record creation timestamp
+  },
+};
+
+// Relationships
+ {
+  // Many books can belong to one school
+  "books.school_id" > "schools._id (Many-to-One)",
+
+  // Many books can belong to one department
+  "books.department_id" > "departments._id (Many-to-One)",
+
+  // Many books can be relevant to one level
+  "books.level" > "users.level (Many-to-One)",
+
+  // Many departments can belong to one school
+  "departments.school_id" > "schools._id (Many-to-One)",
+
+  // Many users can belong to one school
+  "users.school_id" > "schools._id (Many-to-One)",
+
+  // Many users can belong to one department
+  "users.department_id" > "departments._id (Many-to-One)",
+
+  // Many users can be assigned to many book level
+  "users.level" <> "books.level (Many-to-Many)",
+
+  // Many order items can reference one book
+  "orderItems.book_id" > "books._id (Many-to-One)",
+
+  // Many orders can belong to one user
+  "orders.user_id" > "users._id (Many-to-One)",
+
+  // Many order items can belong to one order
+  "orders.orderItems" < "orderItems._id (One-to-Many)",
+
+  // Many transactions can belong to one order
+  "transactions.order_id" > "orders._id (Many-to-One)",
+
+  // Many transactions can be made by one user
+  "transactions.user_id"> "users._id (Many-to-One)",
+
+  // Many comments can be made by one user
+  "comments.user_id" > "users._id (Many-to-One)",
+
+  // Many comments can belong to one book
+  "comments.book_id" > "books._id (Many-to-One)",
+};
+
